@@ -1,8 +1,19 @@
 import io
 import contextlib
 from pylint import lint
+from typing import Dict, List, Union
 
-def debug_code_with_pylint(file_path):
+def debug_code_with_pylint(file_path: str) -> Dict[str, Union[str, List[str]]]:
+    """Analyze Python code using Pylint and return the score and messages.
+    
+    Args:
+        file_path (str): Path to the Python file to analyze
+        
+    Returns:
+        Dict[str, Union[str, List[str]]]: A dictionary containing:
+            - score (str): The Pylint score message
+            - messages (List[str]): List of Pylint messages/warnings
+    """
     pylint_output = io.StringIO()
 
     # Redirect stdout to capture Pylint's output

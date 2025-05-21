@@ -1,13 +1,23 @@
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
+from typing import Optional
 
 load_dotenv()
 
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 model = genai.GenerativeModel('gemini-1.5-flash')
 
-def codewriter(prompt, file_path="MAY-20/generated_function.py"):
+def codewriter(prompt: str, file_path: str = "MAY-20/generated_function.py") -> str:
+    """Generate code using Gemini AI and save it to a file.
+    
+    Args:
+        prompt (str): The prompt describing the code to generate
+        file_path (str, optional): Path where the generated code will be saved. Defaults to "MAY-20/generated_function.py"
+    
+    Returns:
+        str: The generated code or an error message if generation fails
+    """
     try:
         response = model.generate_content(prompt)
         with open(file_path, 'w') as f:
