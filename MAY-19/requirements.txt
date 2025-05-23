@@ -1,0 +1,5 @@
+asyncio
+selenium
+google-generativeai
+dotenv
+openai

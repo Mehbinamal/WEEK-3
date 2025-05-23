@@ -97,32 +97,37 @@ def process_and_store_document(text: str, collection_name: str = "documents") ->
     
     return collection
 
-def query_vector_store(query: str, n_results: int = 5, collection: chromadb.Collection = None) -> dict:
+def query_vector_store(query: str, n_results: int = 5, collection_name: str = "my_documents") -> dict:
     """
     Query the vector store for similar documents.
     
     Args:
         query (str): The search query
         n_results (int): Number of results to return
-        collection (chromadb.Collection, optional): The ChromaDB collection to query. If None, uses default "my_documents" collection.
+        collection_name (str): Name of the ChromaDB collection to query
         
     Returns:
         dict: Query results containing documents, metadatas, and distances
     """
     try:
-        if collection is None:
-            # Initialize ChromaDB client and get default collection
-            client = chromadb.Client(Settings(
-                persist_directory="./chroma_db",
-                is_persistent=True
-            ))
-            collection = client.get_collection("my_documents")
+        # Initialize ChromaDB client and get collection
+        client = chromadb.Client(Settings(
+            persist_directory="./chroma_db",
+            is_persistent=True
+        ))
+        collection = client.get_collection(collection_name)
         
         results = collection.query(
             query_texts=[query],
             n_results=n_results
         )
-        return results
+        
+        # Convert results to a simple dictionary format
+        return {
+            "documents": results["documents"][0],
+            "metadatas": results["metadatas"][0],
+            "distances": results["distances"][0]
+        }
     except Exception as e:
         print(f"Error querying vector store: {str(e)}")
         raise

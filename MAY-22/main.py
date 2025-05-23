@@ -14,7 +14,7 @@ load_dotenv()
 async def main():
     #model client
     model_client = OpenAIChatCompletionClient(
-        model="gemini-1.5-flash-8b",
+        model="gemini-1.5-flash",
         api_key=os.getenv("GOOGLE_API_KEY")
     )
 
@@ -31,28 +31,19 @@ async def main():
         name="RAG_Agent",
         model_client=model_client,
         description="A helpful assistant that can answer questions and provide information",
-        system_message="You are a helpful assistant that uses the RAGSystem tool to provide comprehensive answers based on retrieved information",
-        tools=[RAGSystem.query]
+        system_message="You are a helpful assistant that provide comprehensive answers based on retrieved information from chromadb",
     )
 
-    
-    #create user proxy agent
-    user_proxy = UserProxyAgent(
-        name="User_Proxy",
-        model_client=model_client,
-        description="A user proxy agent that can answer questions and provide information"
-    )
 
     termination_condition = TextMentionTermination("TERMINATE")
 
     #create team
     team = RoundRobinGroupChat(
-        agents=[query_agent, rag_agent],
-        user_proxy=user_proxy,
+        [query_agent, rag_agent],
         termination_condition=termination_condition
     )
 
-    await team.run()
+    await Console(team.run_stream(task='what is the model of the laptop?'))
 
     await model_client.close()
     
